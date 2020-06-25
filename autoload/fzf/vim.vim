@@ -694,18 +694,20 @@ function! s:ag_handler(lines, has_column)
     return
   endif
 
-  let first = list[0]
-  try
-    call s:open(cmd, first.filename)
-    execute first.lnum
-    if a:has_column
-      execute 'normal!' first.col.'|'
-    endif
-    normal! zz
-  catch
-  endtry
+  " reserve current directory in case it is changed after s:open
+  let currdir = expand('%:p:h') . (s:is_win ? '\\' : '/')
 
-  call s:fill_quickfix(list)
+  for entry in list
+      try
+          call s:open(cmd, currdir . entry.filename)
+          execute entrty.lnum
+          if a:has_column
+              execute 'normal!' first.col.'|'
+          endif
+          normal! zz
+      catch
+      endtry
+  endfor
 endfunction
 
 " query, [[ag options], options]
